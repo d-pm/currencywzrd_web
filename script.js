@@ -15,7 +15,7 @@ window.addEventListener("load", () => {
   const toggle = document.getElementById("toggleInfo");
   const details = document.getElementById("cookieDetails");
 
-  if (!localStorage.getItem("cookiesAccepted")) {
+  if (banner && !localStorage.getItem("cookiesAccepted")) {
     banner.style.display = "block";
   }
 
@@ -35,6 +35,9 @@ window.addEventListener("load", () => {
   
   // Initialize scroll animations
   initScrollAnimations();
+
+  // Initialize mobile menu
+  initMobileMenu();
 });
 
 // Reviews Slider
@@ -109,16 +112,68 @@ function initScrollAnimations() {
   });
 }
 
+// Mobile Menu Toggle
+function initMobileMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+  if (!hamburger || !mobileMenu) return;
+
+  function openMenu() {
+    mobileMenu.classList.add('active');
+    hamburger.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileMenu.classList.remove('active');
+    hamburger.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    if (mobileMenu.classList.contains('active')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  if (mobileMenuClose) {
+    mobileMenuClose.addEventListener('click', closeMenu);
+  }
+
+  // Sluit menu bij klik op een link
+  mobileMenu.querySelectorAll('.mobile-menu-nav a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // Sluit menu bij Escape toets
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+      closeMenu();
+    }
+  });
+}
+
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
+  anchor.addEventListener("click", function (e) {
+
+    const href = this.getAttribute("href");
+
+    if (href === "#") return;
+
+    const target = document.querySelector(href);
+
     if (target) {
+      e.preventDefault();
       target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
+        behavior: "smooth",
+        block: "start"
       });
     }
+
   });
 });
